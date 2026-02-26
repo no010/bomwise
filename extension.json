@@ -1,0 +1,49 @@
+{
+  "name": "bomwise",
+  "version": "1.0.0",
+  "description": "BOM智能优化器 - 一键分析BOM，智能推荐替代料，实时查询库存与价格",
+  "entry": "./dist/index.js",
+  "icon": "icon.png",
+  "author": "BOMWise Contributors",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/no010/bomwise",
+  "contributes": {
+    "commands": [
+      {
+        "command": "bomwise.analyze",
+        "title": "BOM智能优化"
+      },
+      {
+        "command": "bomwise.findAlternatives",
+        "title": "查找替代料"
+      },
+      {
+        "command": "bomwise.checkPrices",
+        "title": "查询价格与库存"
+      }
+    ],
+    "menus": {
+      "schematic.toolbar": [
+        {
+          "command": "bomwise.analyze",
+          "title": "BOM智能优化",
+          "icon": "icon.png"
+        }
+      ],
+      "extend": [
+        {
+          "command": "bomwise.analyze",
+          "title": "BOM智能优化"
+        },
+        {
+          "command": "bomwise.findAlternatives",
+          "title": "查找替代料"
+        },
+        {
+          "command": "bomwise.checkPrices",
+          "title": "查询价格与库存"
+        }
+      ]
+    }
+  }
+}
