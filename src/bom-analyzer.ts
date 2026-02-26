@@ -67,14 +67,14 @@ export interface BOMAnalysisResult {
  */
 export async function analyzeBOM(): Promise<BOMAnalysisResult> {
   // Non-system API call #1: getActiveDocument()
-  const document = await eda.getActiveDocument();
+  const activeDoc = await eda.getActiveDocument();
 
-  if (!document) {
+  if (!activeDoc) {
     throw new Error('请先打开一个原理图文件');
   }
 
-  if (document.docType !== 'schematic') {
-    throw new Error(`当前文档类型为 "${document.docType}"，请切换到原理图`);
+  if (activeDoc.docType !== 'schematic') {
+    throw new Error(`当前文档类型为 "${activeDoc.docType}"，请切换到原理图`);
   }
 
   // Non-system API call #2: getBOM()
@@ -88,7 +88,7 @@ export async function analyzeBOM(): Promise<BOMAnalysisResult> {
   const missingLcscParts = parsed.filter((item) => !item.lcscPart);
 
   return {
-    document,
+    document: activeDoc,
     items: parsed,
     uniquePartCount: parsed.length,
     totalComponentCount: parsed.reduce((sum, item) => sum + item.quantity, 0),
@@ -100,8 +100,10 @@ export async function analyzeBOM(): Promise<BOMAnalysisResult> {
 /**
  * Parse raw BOM items from the EDA API into normalized ParsedBOMItem objects.
  * Groups items with the same LCSC part number (or value+footprint fallback).
+ *
+ * @internal exported for unit testing
  */
-function parseBOMItems(rawItems: BOMItem[]): ParsedBOMItem[] {
+export function parseBOMItems(rawItems: BOMItem[]): ParsedBOMItem[] {
   const groupMap = new Map<string, ParsedBOMItem>();
 
   for (const raw of rawItems) {
@@ -110,8 +112,9 @@ function parseBOMItems(rawItems: BOMItem[]): ParsedBOMItem[] {
     const footprint = (raw.Footprint ?? '').trim();
     const designator = (raw.Designator ?? '').trim();
 
-    // Use LCSC part number as key; fall back to value+footprint for grouping
-    const groupKey = lcscPart || `${value}|${footprint}`;
+    // Use LCSC part number as key; fall back to value+footprint, then designator
+    const valueFpKey = `${value}|${footprint}`;
+    const groupKey = lcscPart || (valueFpKey !== '|' ? valueFpKey : `__nokey__${designator}`);
 
     if (groupMap.has(groupKey)) {
       const existing = groupMap.get(groupKey)!;

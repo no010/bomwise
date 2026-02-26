@@ -69,6 +69,11 @@ export async function findAlternativesForItem(
 ): Promise<AlternativeResult> {
   const searchQuery = buildSearchQuery(item);
 
+  // Skip items with no meaningful search query
+  if (!searchQuery) {
+    return { original: item, alternatives: [], found: false };
+  }
+
   try {
     const url = `${LCSC_API_BASE}/search?keyword=${encodeURIComponent(searchQuery)}&currentPage=1&pageSize=20`;
     const response = await fetch(url, {
@@ -130,9 +135,11 @@ export async function findAllAlternatives(
 
 /**
  * Build a search query string from the BOM item's attributes.
- * Priority: description > value, filtering out generic footprint info.
+ * Priority: description > value > lcscPart. Returns empty string if nothing available.
+ *
+ * @internal exported for unit testing
  */
-function buildSearchQuery(item: ParsedBOMItem): string {
+export function buildSearchQuery(item: ParsedBOMItem): string {
   // Use description if meaningful (longer than 3 chars and not just a value)
   if (item.description && item.description.length > 3) {
     return item.description;
@@ -141,6 +148,7 @@ function buildSearchQuery(item: ParsedBOMItem): string {
   if (item.value) {
     return item.value;
   }
+  // Last resort: use the LCSC part number itself (may still be empty)
   return item.lcscPart;
 }
 

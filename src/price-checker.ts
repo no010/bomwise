@@ -178,7 +178,8 @@ export async function checkPrices(
 
 // ─── Internal helpers ──────────────────────────────────────────────────────────
 
-function parsePriceTiers(raw: LCSCPriceEntry[]): PriceTier[] {
+/** @internal exported for unit testing */
+export function parsePriceTiers(raw: LCSCPriceEntry[]): PriceTier[] {
   return raw
     .map((entry) => ({
       minQty: entry.startNumber ?? 1,
@@ -187,7 +188,8 @@ function parsePriceTiers(raw: LCSCPriceEntry[]): PriceTier[] {
     .sort((a, b) => a.minQty - b.minQty);
 }
 
-function getBestPrice(tiers: PriceTier[], quantity: number): number {
+/** @internal exported for unit testing */
+export function getBestPrice(tiers: PriceTier[], quantity: number): number {
   if (tiers.length === 0) return 0;
   let best = tiers[0].unitPrice;
   for (const tier of tiers) {

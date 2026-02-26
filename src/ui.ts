@@ -306,7 +306,8 @@ function renderScore(score: number): string {
   return `<span class="tag ${color}">${score}%</span>`;
 }
 
-function escapeHtml(str: string): string {
+/** @internal exported for unit testing */
+export function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
