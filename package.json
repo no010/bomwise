@@ -1,0 +1,24 @@
+{
+  "name": "bomwise",
+  "version": "1.0.0",
+  "description": "BOMWise - Intelligent BOM optimizer for LCEDA Pro. Analyze BOM with one click, smart alternative parts recommendation, real-time inventory & price check.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "lceda",
+    "eda",
+    "bom",
+    "extension",
+    "electronics"
+  ],
+  "author": "BOMWise Contributors",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "rimraf": "^6.1.3",
+    "typescript": "^5.0.0"
+  }
+}
